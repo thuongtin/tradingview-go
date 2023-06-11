@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -20,9 +20,8 @@ var (
 	apiSecret string = os.Getenv("BINANCE_API_SECRET")
 )
 
-
 func HandleFuturesStrategy(c *gin.Context) {
-	jsonData, err := ioutil.ReadAll(c.Request.Body)
+	jsonData, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		panic(err)
 	}
@@ -35,7 +34,7 @@ func HandleFuturesStrategy(c *gin.Context) {
 		c.String(http.StatusBadRequest, "wrong passphrase")
 		return
 	}
-	
+
 	side := strings.ToUpper(alert.Strategy.OrderAction)
 	quantity := fmt.Sprintf("%f", alert.Strategy.OrderContracts)
 	symbol := alert.Ticker
@@ -51,7 +50,7 @@ func HandleFuturesStrategy(c *gin.Context) {
 }
 
 func HandleStrategy(c *gin.Context) {
-	jsonData, err := ioutil.ReadAll(c.Request.Body)
+	jsonData, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		panic(err)
 	}
@@ -66,11 +65,14 @@ func HandleStrategy(c *gin.Context) {
 	}
 
 	side := strings.ToUpper(alert.Strategy.OrderAction)
-	quantity := fmt.Sprintf("%f", alert.Strategy.OrderContracts)
+	quantity := fmt.Sprintf("%.4f", alert.Strategy.OrderContracts)
 	symbol := alert.Ticker
 	fmt.Printf("trading side: %v, quantity: %v\n", side, quantity)
 	client := binance.NewClient(apiKey, apiSecret)
-	
+	fmt.Println(side)
+	fmt.Println(quantity)
+	fmt.Println(symbol)
+
 	order, err := client.NewCreateOrderService().Symbol(symbol).Side(binance.SideType(side)).Type(binance.OrderTypeMarket).Quantity(quantity).Do(context.Background())
 	if err != nil {
 		c.String(http.StatusBadRequest, "create order fail %v", err)
@@ -79,6 +81,3 @@ func HandleStrategy(c *gin.Context) {
 	fmt.Println(order)
 	c.String(http.StatusOK, "create order success")
 }
-
-
-
