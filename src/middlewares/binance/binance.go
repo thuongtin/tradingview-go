@@ -36,7 +36,7 @@ func HandleFuturesStrategy(c *gin.Context) {
 	}
 
 	side := strings.ToUpper(alert.Strategy.OrderAction)
-	quantity := fmt.Sprintf("%f", alert.Strategy.OrderContracts)
+	quantity := fmt.Sprintf("%.2f", alert.Strategy.OrderContracts)
 	symbol := alert.Ticker
 	fmt.Printf("trading side: %v, quantity: %v\n", side, quantity)
 	futuresClient := binance.NewFuturesClient(apiKey, apiSecret)
@@ -65,7 +65,7 @@ func HandleStrategy(c *gin.Context) {
 	}
 
 	side := strings.ToUpper(alert.Strategy.OrderAction)
-	quantity := fmt.Sprintf("%.4f", alert.Strategy.OrderContracts)
+	quantity := fmt.Sprintf("%.2f", alert.Strategy.OrderContracts)
 	symbol := alert.Ticker
 	fmt.Printf("trading side: %v, quantity: %v\n", side, quantity)
 	client := binance.NewClient(apiKey, apiSecret)
