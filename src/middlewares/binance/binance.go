@@ -37,7 +37,14 @@ func HandleFuturesStrategy(c *gin.Context) {
 
 	side := strings.ToUpper(alert.Strategy.OrderAction)
 	quantity := fmt.Sprintf("%.2f", alert.Strategy.OrderContracts)
+
 	symbol := alert.Ticker
+	switch symbol {
+	case "LINKUSDT":
+		quantity = fmt.Sprintf("%.3f", alert.Strategy.OrderContracts)
+	case "SOLUSDT":
+		quantity = fmt.Sprintf("%.4f", alert.Strategy.OrderContracts)
+	}
 	fmt.Printf("trading side: %v, quantity: %v\n", side, quantity)
 	futuresClient := binance.NewFuturesClient(apiKey, apiSecret)
 	order, err := futuresClient.NewCreateOrderService().Symbol(symbol).Side(futures.SideType(side)).Type(futures.OrderTypeMarket).Quantity(quantity).Do(context.Background())
