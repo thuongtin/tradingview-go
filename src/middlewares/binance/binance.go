@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"runtime"
 	"strings"
 
 	"github.com/adshao/go-binance/v2"
@@ -21,6 +22,10 @@ var (
 )
 
 func HandleFuturesStrategy(c *gin.Context) {
+	if runtime.GOOS == "darwin" {
+		futures.UseTestnet = true
+	}
+
 	jsonData, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		panic(err)
@@ -41,11 +46,12 @@ func HandleFuturesStrategy(c *gin.Context) {
 	symbol := alert.Ticker
 	switch symbol {
 	case "LINKUSDT":
-		quantity = fmt.Sprintf("%.3f", alert.Strategy.OrderContracts)
+		quantity = fmt.Sprintf("%.2f", alert.Strategy.OrderContracts)
 	case "SOLUSDT":
-		quantity = fmt.Sprintf("%.4f", alert.Strategy.OrderContracts)
+		quantity = fmt.Sprintf("%.0f", alert.Strategy.OrderContracts)
 	}
-	fmt.Printf("trading side: %v, quantity: %v\n", side, quantity)
+	fmt.Printf("%s trading side: %v, quantity: %v\n", symbol, side, quantity)
+
 	futuresClient := binance.NewFuturesClient(apiKey, apiSecret)
 	order, err := futuresClient.NewCreateOrderService().Symbol(symbol).Side(futures.SideType(side)).Type(futures.OrderTypeMarket).Quantity(quantity).Do(context.Background())
 	if err != nil {
