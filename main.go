@@ -1,6 +1,7 @@
 package main
 
 import (
+
 	"fmt"
 	"os"
 	"time"
@@ -9,6 +10,7 @@ import (
 	"github.com/nathan-tw/tradingview-go/src/middlewares/binance"
 	"github.com/nathan-tw/tradingview-go/src/middlewares/general"
 	"github.com/nathan-tw/tradingview-go/src/middlewares/logger"
+
 )
 
 func main() {
@@ -28,6 +30,5 @@ func main() {
 	r.Use(logger.LogResponseBody)
 	r.GET("/ping", general.Ping)
 	r.POST("/binance_futures_webhook", binance.HandleFuturesStrategy)
-	r.POST("/binance_webhook", binance.HandleStrategy)
 	r.Run()
 }
