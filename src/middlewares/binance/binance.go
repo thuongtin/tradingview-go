@@ -1,7 +1,6 @@
 package binance
 
 import (
-
 	"context"
 	"encoding/json"
 	"fmt"
@@ -16,13 +15,12 @@ import (
 	"github.com/adshao/go-binance/v2/futures"
 	"github.com/gin-gonic/gin"
 	"github.com/nathan-tw/tradingview-go/src/webhook"
-
 )
 
 var (
-	apiKey    string = os.Getenv("BINANCE_API_KEY")
-	apiSecret string = os.Getenv("BINANCE_API_SECRET")
-	QuantityPrecisions = make(map[string]string)
+	apiKey             string = os.Getenv("BINANCE_API_KEY")
+	apiSecret          string = os.Getenv("BINANCE_API_SECRET")
+	QuantityPrecisions        = make(map[string]string)
 )
 
 type ExchangeInfoDto struct {
@@ -137,9 +135,9 @@ func HandleFuturesStrategy(c *gin.Context) {
 	}
 
 	side := strings.ToUpper(alert.Strategy.OrderAction)
-	
 
 	symbol := alert.Ticker
+	symbol = strings.Replace(symbol, ".P", "", 1)
 	quantity := fmt.Sprintf(QuantityPrecisions[symbol], alert.Strategy.OrderContracts)
 	//switch symbol {
 	//case "LINKUSDT":
